@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 1L Readings Docket
 
 A small React + Vite web app version of your Obsidian readings tracker: a
@@ -76,3 +77,7 @@ swapping the `localStorage` calls in `src/hooks/useTasks.js` for a small
 shared backend (Firebase Firestore is a easy fit alongside Firebase
 Hosting) so everyone reads and writes the same task list. Happy to build
 that out if you want to go that route.
+=======
+# 1L-readings-tracker
+2026 Curtis readings tracker with urgency sorting and review progress tracking
+>>>>>>> 4cbc53e1ba87a1558c104ff290a170f3b4045389
