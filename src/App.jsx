@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Sidebar from './components/Sidebar'
 import Dashboard from './components/Dashboard'
 import ReviewQueue from './components/ReviewQueue'
@@ -7,12 +7,33 @@ import { useSchedule } from './hooks/useSchedule'
 import { useTasks } from './hooks/useTasks'
 
 const COLLAPSE_KEY = '1l-readings-tracker:sidebar-collapsed'
+const AUTO_REFRESH_MS = 60 * 60 * 1000 // 1 hour
 
 export default function App() {
   const { schedule, source, lastSynced, loading, error, refresh } = useSchedule()
   const { tasks, markRead, toggleComplete, resetProgress } = useTasks(schedule)
   const [view, setView] = useState({ type: 'dashboard' })
   const [collapsed, setCollapsed] = useState(() => window.localStorage.getItem(COLLAPSE_KEY) === '1')
+  // Not read anywhere directly - just something to bump so the app re-renders
+  // and re-evaluates "today" for the dashboard's date buckets, even if a tab
+  // has been sitting open since yesterday.
+  const [, setClockTick] = useState(0)
+
+  useEffect(() => {
+    function tick() {
+      setClockTick((n) => n + 1)
+      refresh()
+    }
+    const interval = setInterval(tick, AUTO_REFRESH_MS)
+    function onVisible() {
+      if (document.visibilityState === 'visible') tick()
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
+  }, [refresh])
 
   const courses = useMemo(() => [...new Set(tasks.map((t) => t.course))].sort(), [tasks])
 
