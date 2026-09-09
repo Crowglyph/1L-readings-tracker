@@ -15,4 +15,4 @@
 //
 // Leave this empty to run the app entirely from the bundled snapshot in
 // src/data/tasks.json (no live updates, but works out of the box).
-export const SCHEDULE_CSV_URL = ''
+export const SCHEDULE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSB8DFdOChW5FWP3Fx4DSTXsu9_oXRPMkOkwUs95CSvlKm7WMKD1Gv03OG5Iq06Fu_ilcY6W7Osia-7/pub?gid=0&single=true&output=csv'
