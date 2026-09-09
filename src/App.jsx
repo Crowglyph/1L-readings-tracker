@@ -3,12 +3,14 @@ import Sidebar from './components/Sidebar'
 import Dashboard from './components/Dashboard'
 import ReviewQueue from './components/ReviewQueue'
 import CourseView from './components/CourseView'
+import { useSchedule } from './hooks/useSchedule'
 import { useTasks } from './hooks/useTasks'
 
 const COLLAPSE_KEY = '1l-readings-tracker:sidebar-collapsed'
 
 export default function App() {
-  const { tasks, markRead, toggleComplete, resetProgress } = useTasks()
+  const { schedule, source, lastSynced, loading, error, refresh } = useSchedule()
+  const { tasks, markRead, toggleComplete, resetProgress } = useTasks(schedule)
   const [view, setView] = useState({ type: 'dashboard' })
   const [collapsed, setCollapsed] = useState(() => window.localStorage.getItem(COLLAPSE_KEY) === '1')
 
@@ -58,6 +60,11 @@ export default function App() {
         onReset={handleReset}
         collapsed={collapsed}
         onToggleCollapse={toggleCollapsed}
+        syncSource={source}
+        syncLastSynced={lastSynced}
+        syncLoading={loading}
+        syncError={error}
+        onRefresh={refresh}
       />
       <main className="main">
         {view.type === 'dashboard' && (

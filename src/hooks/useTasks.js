@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import baseTasks from '../data/tasks.json'
 import { todayISO } from '../utils/dates'
 
 const OVERRIDES_KEY = '1l-readings-tracker:overrides:v1'
@@ -17,13 +16,24 @@ function saveOverrides(overrides) {
   window.localStorage.setItem(OVERRIDES_KEY, JSON.stringify(overrides))
 }
 
-function mergeTasks(overrides) {
-  return baseTasks.map((t) => ({ ...t, ...(overrides[t.id] || {}) }))
+// Progress (completed / pass / last_review) lives ONLY here, keyed by
+// schedule row id, and is never derived from the schedule itself. That's
+// what makes the schedule safely shareable: editing a due date or adding a
+// reading in the sheet can never accidentally mark something as read for
+// someone, and "reset" always has an unambiguous blank state to return to.
+function mergeTasks(schedule, overrides) {
+  return schedule.map((t) => ({
+    completed: false,
+    pass: '0',
+    last_review: '',
+    ...t,
+    ...(overrides[t.id] || {}),
+  }))
 }
 
-export function useTasks() {
+export function useTasks(schedule) {
   const [overrides, setOverrides] = useState(() => loadOverrides())
-  const tasks = useMemo(() => mergeTasks(overrides), [overrides])
+  const tasks = useMemo(() => mergeTasks(schedule, overrides), [schedule, overrides])
 
   useEffect(() => {
     saveOverrides(overrides)
@@ -50,10 +60,8 @@ export function useTasks() {
   }
 
   function resetProgress() {
-    // A true reset means every task goes back to "never touched" -
-    // not back to whatever completed/pass state shipped in tasks.json.
     const blank = {}
-    for (const t of baseTasks) {
+    for (const t of schedule) {
       blank[t.id] = { completed: false, pass: '0', last_review: '' }
     }
     setOverrides(blank)

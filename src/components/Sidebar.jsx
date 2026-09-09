@@ -8,7 +8,42 @@ function initials(course) {
     .toUpperCase()
 }
 
-export default function Sidebar({ view, onNavigate, courses, courseStats, reviewCount, onReset, collapsed, onToggleCollapse }) {
+function timeAgo(date) {
+  if (!date) return null
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
+  if (seconds < 60) return 'just now'
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return `${minutes}m ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  return `${Math.floor(hours / 24)}d ago`
+}
+
+function syncLabel(source, lastSynced, loading, error) {
+  if (loading) return 'Syncing…'
+  if (source === 'bundled') return 'Built-in schedule'
+  if (source === 'live') return `Synced ${timeAgo(lastSynced) || 'just now'}`
+  if (source === 'cache') return error ? 'Offline — showing saved copy' : 'Showing saved copy'
+  return null
+}
+
+export default function Sidebar({
+  view,
+  onNavigate,
+  courses,
+  courseStats,
+  reviewCount,
+  onReset,
+  collapsed,
+  onToggleCollapse,
+  syncSource,
+  syncLastSynced,
+  syncLoading,
+  syncError,
+  onRefresh,
+}) {
+  const label = syncLabel(syncSource, syncLastSynced, syncLoading, syncError)
+
   return (
     <nav className={`sidebar${collapsed ? ' sidebar--collapsed' : ''}`}>
       <div className="sidebar-top">
@@ -76,9 +111,25 @@ export default function Sidebar({ view, onNavigate, courses, courseStats, review
         })}
       </div>
 
-      <button className="reset-link" onClick={onReset} title="Reset progress">
-        {collapsed ? '↺' : 'Reset progress'}
-      </button>
+      <div className="sidebar-bottom">
+        {!collapsed && label && (
+          <div className={`sync-status${syncSource === 'live' ? ' sync-status--live' : ''}`}>
+            <span className="sync-dot" />
+            <span>{label}</span>
+          </div>
+        )}
+        <button
+          className="sync-refresh"
+          onClick={onRefresh}
+          disabled={syncLoading}
+          title="Check the sheet for updates now"
+        >
+          {collapsed ? '⟳' : syncLoading ? 'Checking…' : 'Check for updates'}
+        </button>
+        <button className="reset-link" onClick={onReset} title="Reset progress">
+          {collapsed ? '↺' : 'Reset progress'}
+        </button>
+      </div>
     </nav>
   )
 }
