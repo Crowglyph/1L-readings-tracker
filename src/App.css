@@ -289,6 +289,48 @@ button {
   color: rgba(246, 242, 233, 0.7);
 }
 
+.about-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(27, 36, 48, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.about-card {
+  position: relative;
+  background: var(--paper-raised);
+  border-radius: 6px;
+  padding: 32px 40px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.about-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.about-close:hover {
+  color: var(--ink);
+}
+
+.about-text {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--ink);
+  margin: 0;
+}
+
 /* ---------- Main content ---------- */
 
 .main {

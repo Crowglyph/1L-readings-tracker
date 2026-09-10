@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 function initials(course) {
   return course
     .split(' ')
@@ -43,6 +45,7 @@ export default function Sidebar({
   onRefresh,
 }) {
   const label = syncLabel(syncSource, syncLastSynced, syncLoading, syncError)
+  const [aboutOpen, setAboutOpen] = useState(false)
 
   return (
     <nav className={`sidebar${collapsed ? ' sidebar--collapsed' : ''}`}>
@@ -137,7 +140,21 @@ export default function Sidebar({
         <button className="reset-link" onClick={onReset} title="Reset progress">
           {collapsed ? '↺' : 'Reset progress'}
         </button>
+        <button className="reset-link" onClick={() => setAboutOpen(true)} title="About">
+          {collapsed ? 'i' : 'About'}
+        </button>
       </div>
+
+      {aboutOpen && (
+        <div className="about-overlay" onClick={() => setAboutOpen(false)}>
+          <div className="about-card" onClick={(e) => e.stopPropagation()}>
+            <button className="about-close" onClick={() => setAboutOpen(false)} aria-label="Close">
+              ×
+            </button>
+            <p className="about-text">By Ethaniel C. 2026</p>
+          </div>
+        </div>
+      )}
     </nav>
   )
 }
