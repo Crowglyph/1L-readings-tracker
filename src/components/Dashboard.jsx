@@ -45,6 +45,8 @@ export default function Dashboard({ tasks, onMarkRead, onToggleComplete }) {
   const nothingPending =
     overdue.length === 0 && thisWeek.length === 0 && nextTwoWeeks.length === 0 && later.length === 0
 
+  const noScheduleAtAll = tasks.length === 0
+
   const handlers = { onMarkRead, onToggleComplete }
 
   return (
@@ -54,7 +56,14 @@ export default function Dashboard({ tasks, onMarkRead, onToggleComplete }) {
         <h1>Readings List</h1>
       </header>
 
-      {nothingPending && <p className="empty">Nothing pending. Enjoy the quiet.</p>}
+      {noScheduleAtAll ? (
+        <p className="empty">
+          No reading schedule connected yet. If you're setting this up, add your Google Sheet's link as the
+          VITE_SCHEDULE_CSV_URL environment variable — see README.md.
+        </p>
+      ) : (
+        nothingPending && <p className="empty">Nothing pending. Enjoy the quiet.</p>
+      )}
 
       <Section title="Overdue" tasks={overdue} overdue {...handlers} />
       <Section title="This Week" tasks={thisWeek} {...handlers} />

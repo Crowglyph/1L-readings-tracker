@@ -21,7 +21,7 @@ function timeAgo(date) {
 
 function syncLabel(source, lastSynced, loading, error) {
   if (loading) return 'Syncing…'
-  if (source === 'bundled') return 'Built-in schedule'
+  if (source === 'bundled') return 'No schedule set'
   if (source === 'live') return `Synced ${timeAgo(lastSynced) || 'just now'}`
   if (source === 'cache') return error ? 'Offline — showing saved copy' : 'Showing saved copy'
   return null
