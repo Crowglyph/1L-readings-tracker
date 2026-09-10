@@ -1,7 +1,9 @@
 # 1L Readings Docket
 
 A React + Vite version of your Obsidian readings tracker: a due-date list,
-a spaced-repetition review queue (pass 1 → 2 → 3), and per-course progress.
+a spaced-repetition review queue (pass 1 → 2 → 3), per-course progress, and
+a collapsible term-overview calendar. Built to serve more than one group
+from a single codebase — see "Hosting more than one group" below.
 
 ## How data is split
 
@@ -15,9 +17,9 @@ This matters, so it's worth being explicit about:
   affect anyone else's, and editing the schedule never marks anything as
   read for anyone.
 
-Without any setup, the app runs fine off a bundled snapshot
+Without any setup, the app runs off a small generic example schedule
 (`src/data/tasks.json`) with no live updates — good for trying it out.
-The steps below turn on live updates.
+The steps below turn on live updates from your own Google Sheet.
 
 ## Run it locally
 
@@ -56,9 +58,16 @@ File → Share → **Publish to web** → pick the specific sheet/tab → format
 **Comma-separated values (.csv)** → Publish. Copy the link it gives you.
 
 **3. Point the app at it.**
-Open `src/config.js` and paste the link into `SCHEDULE_CSV_URL`.
 
-**4. Deploy.** (See below.) This is the one time you need to redeploy for
+The URL is set via an environment variable, `VITE_SCHEDULE_CSV_URL`, not a
+file in the code — this is what lets one codebase serve multiple groups
+(see "Hosting more than one group" below). For local testing you can also
+hardcode a fallback in `src/config.js`.
+
+On Vercel: Project → Settings → Environment Variables → add
+`VITE_SCHEDULE_CSV_URL` with your published link as the value → redeploy.
+
+**4. Deploy / redeploy.** This is the one time you need to touch Vercel for
 a schedule change — after this, editing the sheet is enough.
 
 ### Updating the schedule day to day
@@ -67,7 +76,9 @@ Just edit the Google Sheet: change a due date, add a row, delete a row.
 Everyone's app picks it up automatically the next time they load it (Google
 caches published sheets for a few minutes, so it's not instantaneous). There's
 also a **"Check for updates"** button in the app's sidebar that fetches
-immediately, useful if you want to confirm a change went out.
+immediately, useful if you want to confirm a change went out. The app also
+quietly re-checks on its own once an hour, and any time someone switches
+back to a tab that's been open a while.
 
 ### A note on editing existing rows
 
@@ -84,6 +95,43 @@ The app tracks progress by ID, and by default an ID is derived from
 
 For typo-level fixes this usually doesn't matter. For a genuine schedule
 change (reading swapped, date moved), resetting is arguably correct anyway.
+
+## Hosting more than one group
+
+The whole point of the environment-variable setup above is that this same
+codebase can run several independent groups, each with its own reading
+schedule, without maintaining separate copies of the code:
+
+1. Keep one GitHub repo (this one). Don't fork it per group — a future fix
+   or feature then only has to be pushed once and every group's deployment
+   picks it up on its own.
+2. In Vercel, create a **separate project per group**, all importing from
+   the same GitHub repo. Each project gets its own URL.
+3. Give each project its own `VITE_SCHEDULE_CSV_URL` environment variable,
+   pointing at that group's own Google Sheet.
+4. Hand `Reading_Schedule_Template.csv` (delivered alongside this project)
+   to each group's volunteer. It's a blank sheet with the right column
+   headers and one example row — they fill it in, publish it the same way
+   you did, and send you the link to paste into that project's settings.
+
+Volunteers never touch code, GitHub, or Vercel — just a spreadsheet.
+Progress is stored per-website in each person's browser, so there's no risk
+of one group's checkmarks or reading list crossing into another's.
+
+Before a group's sheet is connected, their deployment shows a small
+generic example schedule (`src/data/tasks.json`) rather than your own real
+readings, so nobody sees the wrong group's content by mistake.
+
+## Term overview (calendar heatmap)
+
+A collapsible panel on the right shows the whole term at a glance: one
+small square per day, colored by course, filled in wherever something's
+due. Multiple courses due the same day show as side-by-side stripes.
+Clicking a day lists what's due. It's collapsed by default — click the `‹`
+tab on the right edge to open it. It's read-only and doesn't affect
+progress in any way; it's purely for people who like seeing the shape of
+the term. On narrower screens (under ~1000px) it hides itself so the
+reading list keeps the space.
 
 ## Deploy it
 
@@ -109,6 +157,7 @@ firebase deploy
 
 ## Editing the bundled fallback
 
-`src/data/tasks.json` is only used when `SCHEDULE_CSV_URL` is empty, or as
-an offline fallback if the sheet can't be reached. You generally don't need
-to touch it once the live sheet is set up.
+`src/data/tasks.json` is only used when `VITE_SCHEDULE_CSV_URL` isn't set,
+or as an offline fallback if the sheet can't be reached. It ships as a
+small generic example schedule on purpose — see "Hosting more than one
+group" above for why.

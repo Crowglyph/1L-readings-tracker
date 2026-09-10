@@ -1,18 +1,13 @@
-// Paste your published Google Sheet's CSV URL here to let everyone using this
-// app pull schedule updates without you redeploying anything.
+// This app can serve multiple groups from one codebase — each group gets
+// its own Vercel project, and each project is told which Google Sheet to
+// read from via an environment variable, VITE_SCHEDULE_CSV_URL, set in that
+// project's Vercel dashboard (Settings → Environment Variables).
 //
-// How to get this URL:
-//   1. Open the Google Sheet with your reading schedule (columns: Course,
-//      Description, Due Date, Pages, Type — see README.md).
-//   2. File → Share → Publish to web.
-//   3. Under "Link", choose the specific sheet/tab, and "Comma-separated
-//      values (.csv)" as the format.
-//   4. Click Publish, copy the link, and paste it below.
-//   5. Redeploy once. After that, editing the Sheet is enough — no more
-//      redeploys needed. (Google's publish-to-web caches for a few minutes,
-//      so changes aren't instant, and there's a manual refresh button in
-//      the app's sidebar for testing.)
+// That's the recommended way to configure this — see README.md for the
+// full "hosting more than one group" walkthrough.
 //
-// Leave this empty to run the app entirely from the bundled snapshot in
-// src/data/tasks.json (no live updates, but works out of the box).
-export const SCHEDULE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSB8DFdOChW5FWP3Fx4DSTXsu9_oXRPMkOkwUs95CSvlKm7WMKD1Gv03OG5Iq06Fu_ilcY6W7Osia-7/pub?gid=0&single=true&output=csv'
+// For quick local testing without setting up an environment variable, you
+// can also hardcode a URL as the fallback below.
+const LOCAL_FALLBACK_URL = ''
+
+export const SCHEDULE_CSV_URL = import.meta.env.VITE_SCHEDULE_CSV_URL || LOCAL_FALLBACK_URL
