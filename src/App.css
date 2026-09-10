@@ -570,6 +570,7 @@ input[type='checkbox'] {
 .cal2-cell {
   background: var(--paper-raised);
   min-height: 92px;
+  min-width: 0;
   padding: 5px;
   display: flex;
   flex-direction: column;
@@ -607,12 +608,14 @@ input[type='checkbox'] {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .cal2-event {
   --event-color: var(--forest);
   display: block;
   width: 100%;
+  min-width: 0;
   text-align: left;
   border: none;
   border-left: 3px solid var(--event-color);
