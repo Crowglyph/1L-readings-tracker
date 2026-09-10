@@ -19,14 +19,3 @@ export function buildCourseColorMap(courses) {
   })
   return map
 }
-
-// Renders a day with readings from multiple courses as equal-width vertical
-// stripes, one per course, so a single small square can still communicate
-// "two things are due here" rather than picking one color and hiding the rest.
-export function stripeGradient(colors) {
-  if (colors.length === 0) return 'transparent'
-  if (colors.length === 1) return colors[0]
-  const step = 100 / colors.length
-  const stops = colors.map((c, i) => `${c} ${i * step}%, ${c} ${(i + 1) * step}%`)
-  return `linear-gradient(to right, ${stops.join(', ')})`
-}

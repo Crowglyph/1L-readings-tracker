@@ -3,12 +3,11 @@ import Sidebar from './components/Sidebar'
 import Dashboard from './components/Dashboard'
 import ReviewQueue from './components/ReviewQueue'
 import CourseView from './components/CourseView'
-import CalendarHeatmap from './components/CalendarHeatmap'
+import CalendarView from './components/CalendarView'
 import { useSchedule } from './hooks/useSchedule'
 import { useTasks } from './hooks/useTasks'
 
 const COLLAPSE_KEY = '1l-readings-tracker:sidebar-collapsed'
-const CAL_COLLAPSE_KEY = '1l-readings-tracker:calendar-collapsed'
 const AUTO_REFRESH_MS = 60 * 60 * 1000 // 1 hour
 
 export default function App() {
@@ -16,12 +15,6 @@ export default function App() {
   const { tasks, markRead, toggleComplete, resetProgress } = useTasks(schedule)
   const [view, setView] = useState({ type: 'dashboard' })
   const [collapsed, setCollapsed] = useState(() => window.localStorage.getItem(COLLAPSE_KEY) === '1')
-  // Defaults to hidden - this is a bonus view for people who like it, not
-  // something everyone needs open by default.
-  const [calendarCollapsed, setCalendarCollapsed] = useState(() => {
-    const stored = window.localStorage.getItem(CAL_COLLAPSE_KEY)
-    return stored === null ? true : stored === '1'
-  })
   // Not read anywhere directly - just something to bump so the app re-renders
   // and re-evaluates "today" for the dashboard's date buckets, even if a tab
   // has been sitting open since yesterday.
@@ -78,14 +71,6 @@ export default function App() {
     })
   }
 
-  function toggleCalendarCollapsed() {
-    setCalendarCollapsed((prev) => {
-      const next = !prev
-      window.localStorage.setItem(CAL_COLLAPSE_KEY, next ? '1' : '0')
-      return next
-    })
-  }
-
   return (
     <div className={`app${collapsed ? ' app--sidebar-collapsed' : ''}`}>
       <Sidebar
@@ -111,13 +96,10 @@ export default function App() {
         {view.type === 'course' && (
           <CourseView course={view.course} tasks={tasks} onMarkRead={markRead} onToggleComplete={toggleComplete} />
         )}
+        {view.type === 'calendar' && (
+          <CalendarView tasks={tasks} courses={courses} onMarkRead={markRead} onToggleComplete={toggleComplete} />
+        )}
       </main>
-      <CalendarHeatmap
-        tasks={tasks}
-        courses={courses}
-        collapsed={calendarCollapsed}
-        onToggleCollapse={toggleCalendarCollapsed}
-      />
     </div>
   )
 }

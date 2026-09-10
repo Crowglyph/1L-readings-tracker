@@ -84,6 +84,14 @@ export default function Sidebar({
           {!collapsed && <span className="nav-item-label">Review Queue</span>}
           {reviewCount > 0 && <span className="nav-badge">{collapsed ? '' : reviewCount}</span>}
         </button>
+        <button
+          className={`nav-item${view.type === 'calendar' ? ' nav-item--active' : ''}`}
+          onClick={() => onNavigate({ type: 'calendar' })}
+          title="Calendar View"
+        >
+          <span className="nav-item-icon">C</span>
+          {!collapsed && <span className="nav-item-label">Calendar View</span>}
+        </button>
       </div>
 
       <div className="nav-group">

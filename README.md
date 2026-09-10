@@ -2,8 +2,8 @@
 
 A React + Vite version of your Obsidian readings tracker: a due-date list,
 a spaced-repetition review queue (pass 1 → 2 → 3), per-course progress, and
-a collapsible term-overview calendar. Built to serve more than one group
-from a single codebase — see "Hosting more than one group" below.
+a month-view calendar tab. Built to serve more than one group from a single
+codebase — see "Hosting more than one group" below.
 
 ## How data is split
 
@@ -122,16 +122,16 @@ Before a group's sheet is connected, their deployment shows a small
 generic example schedule (`src/data/tasks.json`) rather than your own real
 readings, so nobody sees the wrong group's content by mistake.
 
-## Term overview (calendar heatmap)
+## Calendar View
 
-A collapsible panel on the right shows the whole term at a glance: one
-small square per day, colored by course, filled in wherever something's
-due. Multiple courses due the same day show as side-by-side stripes.
-Clicking a day lists what's due. It's collapsed by default — click the `‹`
-tab on the right edge to open it. It's read-only and doesn't affect
-progress in any way; it's purely for people who like seeing the shape of
-the term. On narrower screens (under ~1000px) it hides itself so the
-reading list keeps the space.
+A dedicated tab with a real month grid — click Calendar View in the sidebar.
+Each day shows the readings due that day as small colored chips (color =
+course); click a chip to open a detail panel with the due date, pages,
+type, completion status, and review-pass info, plus the same Mark Read /
+Mark Reviewed / Mark Done actions available elsewhere in the app. Nothing
+shown there is generated commentary — it's exactly the same data as the
+rest of the app, just laid out on a calendar. Navigate months with the
+‹ Today › controls at the top.
 
 ## Deploy it
 
